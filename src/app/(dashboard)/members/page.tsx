@@ -1,7 +1,7 @@
-import React from "react";
+import MembersTable from "@/components/members/member-modal";
 
 const Members = () => {
-  return <div>Members Page</div>;
+  return <MembersTable />;
 };
 
 export default Members;

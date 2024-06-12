@@ -1,7 +1,7 @@
-import React from "react";
+import BooksStatusTable from "@/components/book-status/book-status-table";
 
 const BooksStatus = () => {
-  return <div>Books Status Page</div>;
+  return <BooksStatusTable />;
 };
 
 export default BooksStatus;

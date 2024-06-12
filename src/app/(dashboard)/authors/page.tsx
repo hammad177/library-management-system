@@ -1,7 +1,7 @@
-import React from "react";
+import AuthorsTable from "@/components/authors/author-modal";
 
 const Authors = () => {
-  return <div>Authors Page</div>;
+  return <AuthorsTable />;
 };
 
 export default Authors;
