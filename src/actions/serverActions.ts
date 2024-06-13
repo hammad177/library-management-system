@@ -88,10 +88,26 @@ export const deleteFromDB = (tableName: DatabaseTables, itemId: string) => {
   });
 };
 
+export const getAuthors = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query("SELECT id, name FROM authors", (err, result) => {
+      if (err) {
+        resolve({
+          success: false,
+          message: "Failed to fetch data",
+          data: [],
+        });
+      } else {
+        resolve({ success: true, message: "Authors", data: result });
+      }
+    });
+  });
+};
+
 export const getAuthorsList = () => {
   return new Promise<QueryResponse>((resolve, reject) => {
     sql_db.query(
-      "SELECT id, name, id as total_books FROM authors",
+      "SELECT a.name AS name, COUNT(b.id) AS total_books FROM authors a LEFT JOIN books b ON a.id = b.author_id GROUP BY a.name",
       (err, result) => {
         if (err) {
           resolve({

@@ -14,7 +14,7 @@ import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
 import AppTooltip from "@/components/tooltip";
 import {
-  getAuthorsList,
+  getAuthors,
   insertIntoDB,
   updateIntoDB,
 } from "@/actions/serverActions";
@@ -62,7 +62,7 @@ const BooksModal = ({
 
   useEffect(() => {
     (async () => {
-      const { success, data } = await getAuthorsList();
+      const { success, data } = await getAuthors();
       if (success) {
         setAuthorsOption(authorsOptions(data as Record<string, string>[]));
       }
