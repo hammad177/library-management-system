@@ -141,3 +141,22 @@ export const getBooksList = () => {
     );
   });
 };
+
+export const getMembersList = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query(
+      "SELECT id, name, email, phone_no FROM members",
+      (err, result) => {
+        if (err) {
+          resolve({
+            success: false,
+            message: "Failed to fetch data",
+            data: [],
+          });
+        } else {
+          resolve({ success: true, message: "Authors List", data: result });
+        }
+      }
+    );
+  });
+};

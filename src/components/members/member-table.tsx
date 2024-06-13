@@ -9,7 +9,11 @@ import DeleteModal from "@/components/delete-modal";
 import { deleteFromDB } from "@/actions/serverActions";
 import { FilePenLine } from "lucide-react";
 
-const MembersTable = () => {
+type PropsMembersTable = {
+  data: any[];
+};
+
+const MembersTable = ({ data }: PropsMembersTable) => {
   const column = useMemo(
     () => [
       {
@@ -23,10 +27,6 @@ const MembersTable = () => {
       {
         header: "Phone No.",
         accessorKey: "phone_no",
-      },
-      {
-        header: "On Loan",
-        accessorKey: "on_loan",
       },
       {
         header: "Action",
@@ -59,7 +59,7 @@ const MembersTable = () => {
     <Card>
       <FilteredTable
         title="Members"
-        data={[]}
+        data={data}
         columns={column}
         ButtonCmp={() => (
           <MembersModal
