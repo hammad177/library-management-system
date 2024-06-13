@@ -14,36 +14,36 @@ const MembersTable = () => {
     () => [
       {
         header: "Name",
-        accessorKey: "title",
+        accessorKey: "name",
       },
       {
         header: "Email",
-        accessorKey: "edition",
+        accessorKey: "email",
       },
       {
         header: "Phone No.",
-        accessorKey: "author_name",
+        accessorKey: "phone_no",
       },
       {
         header: "On Loan",
-        accessorKey: "genre",
+        accessorKey: "on_loan",
       },
       {
         header: "Action",
         cell: (prop: any) => {
-          const values = prop?.row?.original;
+          const { id, name, email, phone_no } = prop?.row?.original;
           return (
             <div className="flex items-center gap-5">
               <MembersModal
                 TriggerButton={<FilePenLine className="cursor-pointer" />}
                 isUpdate={true}
-                formValues={{ name: values?.name || "" }}
-                itemId={values?.id ?? ""}
+                itemId={id}
+                formValues={{ name, email, phone_no }}
               />
 
               <DeleteModal
                 title="Member"
-                id={values?.id}
+                id={id}
                 tableName="members"
                 deleteFn={deleteFromDB}
               />

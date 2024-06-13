@@ -106,3 +106,22 @@ export const getAuthorsList = () => {
     );
   });
 };
+
+export const getBooksList = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query(
+      "SELECT b.id AS id, b.title AS title, b.genre AS genre, b.edition AS edition, a.name AS author_name FROM books b JOIN authors a ON b.author_id = a.id",
+      (err, result) => {
+        if (err) {
+          resolve({
+            success: false,
+            message: "Failed to fetch data",
+            data: [],
+          });
+        } else {
+          resolve({ success: true, message: "Books List", data: result });
+        }
+      }
+    );
+  });
+};

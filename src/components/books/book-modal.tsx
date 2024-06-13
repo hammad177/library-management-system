@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+"use client";
+
 import {
   Dialog,
   DialogContent,
@@ -7,72 +8,134 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { FormModalProps, TBookForm } from "@/type";
+import { useForm } from "react-hook-form";
+import FormInput from "@/components/form-input";
+import AppTooltip from "@/components/tooltip";
+import {
+  getAuthorsList,
+  insertIntoDB,
+  updateIntoDB,
+} from "@/actions/serverActions";
+import useFormSubmission from "@/hooks/useFormSubmission";
 import SelectBox from "@/components/select-box";
+import { authorsOptions, genreOptions } from "./helper";
+import { useEffect, useState } from "react";
 
-const BooksModal = () => {
-  const options = [
-    {
-      label: "Banana",
-      value: "banana",
-    },
-    {
-      label: "Blueberry",
-      value: "blueberry",
-    },
-    {
-      label: "Grapes",
-      value: "grapes",
-    },
-    {
-      label: "Apple",
-      value: "apple",
-    },
-  ];
+const initialState = {
+  title: "",
+  edition: "",
+  genre: "",
+  author_id: "",
+};
+
+const BooksModal = ({
+  TriggerButton,
+  isUpdate,
+  formValues,
+  itemId,
+}: FormModalProps) => {
+  const [authorsOption, setAuthorsOption] = useState<
+    { label: string; value: string }[]
+  >([]);
+
+  const {
+    register,
+    handleSubmit,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<TBookForm>({
+    defaultValues: isUpdate ? formValues : initialState,
+  });
+
+  const { handleFormSubmission } = useFormSubmission({
+    isUpdate: isUpdate ?? false,
+    itemId: itemId ?? "",
+    initialState: initialState,
+    tableName: "books",
+    reset: reset,
+    addFn: insertIntoDB,
+    editFn: updateIntoDB,
+  });
+
+  useEffect(() => {
+    (async () => {
+      const { success, data } = await getAuthorsList();
+      if (success) {
+        setAuthorsOption(authorsOptions(data as Record<string, string>[]));
+      }
+    })();
+  }, []);
+
+  const handleForm = (value: any) => {
+    value.author_id = +value.author_id;
+    handleFormSubmission(value);
+  };
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default">Add Book</Button>
-      </DialogTrigger>
+      {isUpdate ? (
+        <AppTooltip title="Edit">
+          <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+        </AppTooltip>
+      ) : (
+        <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+      )}
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Add New Book</DialogTitle>
-        </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="title">Title</Label>
-            <Input id="title" placeholder="Book Title" className="col-span-3" />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="edition">Edition</Label>
-            <Input
-              id="edition"
-              placeholder="Book Edition"
-              className="col-span-3"
+        <form onSubmit={handleSubmit(handleForm)}>
+          <DialogHeader>
+            <DialogTitle>{isUpdate ? "Edit" : "Add New"} Book</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <FormInput
+              name="title"
+              label="Title"
+              placeholder="Book Title"
+              requiredMessage="Book Title is required"
+              register={register}
+              error={errors?.title}
+              errorMessage={errors?.title?.message}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="genre">Genre</Label>
+            <FormInput
+              name="edition"
+              label="Edition"
+              placeholder="Book Edition"
+              requiredMessage="Book Edition is required"
+              register={register}
+              error={errors?.edition}
+              errorMessage={errors?.edition?.message}
+            />
             <SelectBox
               placeholder="Select Genre"
               selectLabel="Genres List"
-              options={options}
+              label="Genre"
+              name="genre"
+              setValue={setValue}
+              requiredMessage="Genre is required"
+              register={register}
+              error={errors?.genre}
+              errorMessage={errors?.genre?.message}
+              options={genreOptions()}
             />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="genre">Author</Label>
             <SelectBox
               placeholder="Select Author"
               selectLabel="Authors List"
-              options={options}
+              label="Author"
+              name="author_id"
+              setValue={setValue}
+              requiredMessage="Author is required"
+              register={register}
+              error={errors?.author_id}
+              errorMessage={errors?.author_id?.message}
+              options={authorsOption}
             />
           </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Submit</Button>
-        </DialogFooter>
+          <DialogFooter>
+            <Button type="submit">Submit</Button>
+          </DialogFooter>
+        </form>
       </DialogContent>
     </Dialog>
   );

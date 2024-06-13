@@ -1,80 +1,19 @@
 "use client";
+
 import React, { useMemo } from "react";
 import FilteredTable from "@/components/ui/filtered-table";
 import { Card } from "@/components/ui/card";
 import BooksModal from "./book-modal";
+import { Button } from "@/components/ui/button";
+import { FilePenLine } from "lucide-react";
+import { deleteFromDB } from "@/actions/serverActions";
+import DeleteModal from "@/components/delete-modal";
 
-interface Book {
-  title: string;
-  edition: number;
-  author_name: string;
-  genre: string;
-}
+type PropsBooksTable = {
+  data: any[];
+};
 
-const bookData: Book[] = [
-  {
-    title: "Eos aut aut.",
-    edition: 5,
-    author_name: "John Doe",
-    genre: "Rock",
-  },
-  {
-    title: "Tempore qui ipsum.",
-    edition: 2,
-    author_name: "Jane Smith",
-    genre: "Jazz",
-  },
-  {
-    title: "Iure et non.",
-    edition: 3,
-    author_name: "Alice Johnson",
-    genre: "Classical",
-  },
-  {
-    title: "Nostrum sunt ad.",
-    edition: 7,
-    author_name: "Chris Lee",
-    genre: "Pop",
-  },
-  {
-    title: "Quisquam est rerum.",
-    edition: 1,
-    author_name: "Patricia Brown",
-    genre: "Hip-Hop",
-  },
-  {
-    title: "Et distinctio aut.",
-    edition: 4,
-    author_name: "Michael Davis",
-    genre: "Country",
-  },
-  {
-    title: "Quidem aut voluptas.",
-    edition: 6,
-    author_name: "Linda Wilson",
-    genre: "Electronic",
-  },
-  {
-    title: "Mollitia minus pariatur.",
-    edition: 8,
-    author_name: "Robert Martinez",
-    genre: "Reggae",
-  },
-  {
-    title: "Quasi excepturi similique.",
-    edition: 9,
-    author_name: "Mary Anderson",
-    genre: "Blues",
-  },
-  {
-    title: "Laboriosam nulla cum.",
-    edition: 10,
-    author_name: "William Thomas",
-    genre: "R&B",
-  },
-];
-
-const BooksTable = () => {
+const BooksTable = ({ data }: PropsBooksTable) => {
   const column = useMemo(
     () => [
       {
@@ -93,6 +32,29 @@ const BooksTable = () => {
         header: "Genre",
         accessorKey: "genre",
       },
+      {
+        header: "Action",
+        cell: (prop: any) => {
+          const { id, title, edition, genre, author_id } = prop?.row?.original;
+          return (
+            <div className="flex items-center gap-5">
+              <BooksModal
+                TriggerButton={<FilePenLine className="cursor-pointer" />}
+                isUpdate={true}
+                formValues={{ title, edition, genre, author_id }}
+                itemId={id}
+              />
+
+              <DeleteModal
+                title="Books"
+                id={id}
+                tableName="books"
+                deleteFn={deleteFromDB}
+              />
+            </div>
+          );
+        },
+      },
     ],
     []
   );
@@ -101,9 +63,13 @@ const BooksTable = () => {
     <Card>
       <FilteredTable
         title="Books"
-        data={bookData}
+        data={data}
         columns={column}
-        ButtonCmp={BooksModal}
+        ButtonCmp={() => (
+          <BooksModal
+            TriggerButton={<Button variant="default">Add Book</Button>}
+          />
+        )}
         isLoading={false}
       />
     </Card>

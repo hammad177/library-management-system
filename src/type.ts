@@ -11,6 +11,12 @@ export type TMemberForm = {
   email: string;
   phone_no: string;
 };
+export type TBookForm = {
+  title: string;
+  edition: string;
+  genre: string;
+  author_id: string;
+};
 export type FormModalProps = {
   TriggerButton: ReactNode;
   isUpdate?: boolean;
