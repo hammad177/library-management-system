@@ -1,8 +1,10 @@
+import { QueryResult } from "mysql2";
+
 export type TAuthorForm = {
   name: string;
 };
-export type TAuthorTable = {
-  id: number;
-  name: string;
-  total_book: number;
+export type QueryResponse = {
+  success: boolean;
+  message: string;
+  data: Record<string, string>[] | QueryResult;
 };

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -9,53 +8,56 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { TAuthorForm } from "@/type";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
-import { addAuthor } from "@/actions/serverAction";
-import { useToast } from "@/components/ui/use-toast";
+import { addAuthor, editAuthor } from "@/actions/serverAction";
+import { ReactNode } from "react";
+import useFormSubmission from "@/hooks/useFormSubmission";
 
-const AuthorsModal = () => {
-  const { toast } = useToast();
+type PropsAuthorsModal = {
+  TriggerButton: ReactNode;
+  isUpdate?: boolean;
+  formValues?: Record<string, string>;
+  itemId?: string;
+};
 
+const initialState = {
+  name: "",
+};
+
+const AuthorsModal = ({
+  TriggerButton,
+  isUpdate,
+  formValues,
+  itemId,
+}: PropsAuthorsModal) => {
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<TAuthorForm>();
+  } = useForm<TAuthorForm>({
+    defaultValues: isUpdate ? formValues : initialState,
+  });
 
-  const handleRegistration = async (data: any) => {
-    const { success } = await addAuthor(data);
-    if (!success) {
-      toast({
-        title: "Error",
-        description: "Failed to add new author",
-        variant: "destructive",
-        className:
-          "top-0 right-0 flex fixed md:max-w-[420px] md:top-4 md:right-4",
-      });
-    } else {
-      toast({
-        title: "Success",
-        description: "New author added successfully",
-      });
-      reset();
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
-    }
-  };
+  const { handleFormSubmission } = useFormSubmission({
+    isUpdate: isUpdate ?? false,
+    itemId: itemId ?? "",
+    initialState: initialState,
+    reset: reset,
+    addFn: addAuthor,
+    editFn: editAuthor,
+  });
 
   return (
     <Dialog>
-      <DialogTrigger asChild>
-        <Button variant="default">Add Author</Button>
-      </DialogTrigger>
+      <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
-        <form onSubmit={handleSubmit(handleRegistration)}>
+        <form onSubmit={handleSubmit(handleFormSubmission)}>
           <DialogHeader>
-            <DialogTitle>Add New Author</DialogTitle>
+            <DialogTitle>{isUpdate ? "Edit" : "Add New"} Author</DialogTitle>
           </DialogHeader>
           <div className="grid gap-4 py-4">
             <FormInput

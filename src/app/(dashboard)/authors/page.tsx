@@ -4,9 +4,9 @@ import { getAuthorsList } from "@/actions/serverAction";
 import AuthorsTable from "@/components/authors/author-table";
 
 const Authors = async () => {
-  const { data, error } = await getAuthorsList();
+  const { data } = await getAuthorsList();
 
-  return <AuthorsTable data={data as any[]} error={error} />;
+  return <AuthorsTable data={data as any[]} />;
 };
 
 export default Authors;
