@@ -7,7 +7,7 @@ import AuthorsModal from "./author-modal";
 import { FilePenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { deleteFromDB } from "@/actions/serverActions";
-import DeleteModal from "../delete-modal";
+import DeleteModal from "@/components/delete-modal";
 
 type PropsAuthorsTable = {
   data: any[];

@@ -1,4 +1,4 @@
-import MembersTable from "@/components/members/member-modal";
+import MembersTable from "@/components/members/member-table";
 
 const Members = () => {
   return <MembersTable />;

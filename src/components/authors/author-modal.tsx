@@ -8,21 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
-import { TAuthorForm } from "@/type";
+import { FormModalProps, TAuthorForm } from "@/type";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
 import AppTooltip from "@/components/tooltip";
 import { insertIntoDB, updateIntoDB } from "@/actions/serverActions";
 import useFormSubmission from "@/hooks/useFormSubmission";
-
-type PropsAuthorsModal = {
-  TriggerButton: ReactNode;
-  isUpdate?: boolean;
-  formValues?: Record<string, string>;
-  itemId?: string;
-};
 
 const initialState = {
   name: "",
@@ -33,7 +25,7 @@ const AuthorsModal = ({
   isUpdate,
   formValues,
   itemId,
-}: PropsAuthorsModal) => {
+}: FormModalProps) => {
   const {
     register,
     handleSubmit,

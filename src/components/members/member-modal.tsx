@@ -1,113 +1,101 @@
-"use client";
-import React, { useMemo } from "react";
-import FilteredTable from "@/components/ui/filtered-table";
-import { Card } from "@/components/ui/card";
-import MembersModal from "./member-table";
+import { insertIntoDB, updateIntoDB } from "@/actions/serverActions";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import useFormSubmission from "@/hooks/useFormSubmission";
+import AppTooltip from "@/components/tooltip";
+import { FormModalProps, TMemberForm } from "@/type";
+import { useForm } from "react-hook-form";
+import FormInput from "@/components/form-input";
 
-interface Book {
-  title: string;
-  edition: number;
-  author_name: string;
-  genre: string;
-}
+const initialState = {
+  name: "",
+  email: "",
+  phone_no: "",
+};
 
-const bookData: Book[] = [
-  {
-    title: "Eos aut aut.",
-    edition: 5,
-    author_name: "John Doe",
-    genre: "Rock",
-  },
-  {
-    title: "Tempore qui ipsum.",
-    edition: 2,
-    author_name: "Jane Smith",
-    genre: "Jazz",
-  },
-  {
-    title: "Iure et non.",
-    edition: 3,
-    author_name: "Alice Johnson",
-    genre: "Classical",
-  },
-  {
-    title: "Nostrum sunt ad.",
-    edition: 7,
-    author_name: "Chris Lee",
-    genre: "Pop",
-  },
-  {
-    title: "Quisquam est rerum.",
-    edition: 1,
-    author_name: "Patricia Brown",
-    genre: "Hip-Hop",
-  },
-  {
-    title: "Et distinctio aut.",
-    edition: 4,
-    author_name: "Michael Davis",
-    genre: "Country",
-  },
-  {
-    title: "Quidem aut voluptas.",
-    edition: 6,
-    author_name: "Linda Wilson",
-    genre: "Electronic",
-  },
-  {
-    title: "Mollitia minus pariatur.",
-    edition: 8,
-    author_name: "Robert Martinez",
-    genre: "Reggae",
-  },
-  {
-    title: "Quasi excepturi similique.",
-    edition: 9,
-    author_name: "Mary Anderson",
-    genre: "Blues",
-  },
-  {
-    title: "Laboriosam nulla cum.",
-    edition: 10,
-    author_name: "William Thomas",
-    genre: "R&B",
-  },
-];
+const MembersModal = ({
+  TriggerButton,
+  isUpdate,
+  formValues,
+  itemId,
+}: FormModalProps) => {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<TMemberForm>({
+    defaultValues: isUpdate ? formValues : initialState,
+  });
 
-const MembersTable = () => {
-  const column = useMemo(
-    () => [
-      {
-        header: "Name",
-        accessorKey: "title",
-      },
-      {
-        header: "Email",
-        accessorKey: "edition",
-      },
-      {
-        header: "Phone No.",
-        accessorKey: "author_name",
-      },
-      {
-        header: "On Loan",
-        accessorKey: "genre",
-      },
-    ],
-    []
-  );
+  const { handleFormSubmission } = useFormSubmission({
+    isUpdate: isUpdate ?? false,
+    itemId: itemId ?? "",
+    initialState: initialState,
+    tableName: "members",
+    reset: reset,
+    addFn: insertIntoDB,
+    editFn: updateIntoDB,
+  });
 
   return (
-    <Card>
-      <FilteredTable
-        title="Members"
-        data={bookData}
-        columns={column}
-        ButtonCmp={MembersModal}
-        isLoading={false}
-      />
-    </Card>
+    <Dialog>
+      {isUpdate ? (
+        <AppTooltip title="Edit">
+          <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+        </AppTooltip>
+      ) : (
+        <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+      )}
+      <DialogContent className="sm:max-w-[425px]">
+        <form onSubmit={handleSubmit(handleFormSubmission)}>
+          <DialogHeader>
+            <DialogTitle>Add New Member</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <FormInput
+              name="name"
+              label="Name"
+              placeholder="Member Name"
+              requiredMessage="Member Name is required"
+              register={register}
+              error={errors?.name}
+              errorMessage={errors?.name?.message}
+            />
+            <FormInput
+              name="email"
+              label="Email"
+              placeholder="Member Email"
+              requiredMessage="Member Email is required"
+              register={register}
+              error={errors?.email}
+              errorMessage={errors?.email?.message}
+            />
+
+            <FormInput
+              name="phone_no"
+              label="Phone No."
+              placeholder="Member Phone Number"
+              requiredMessage="Phone No. is required"
+              register={register}
+              error={errors?.phone_no}
+              errorMessage={errors?.phone_no?.message}
+            />
+          </div>
+          <DialogFooter>
+            <Button type="submit">Submit</Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   );
 };
 
-export default MembersTable;
+export default MembersModal;
