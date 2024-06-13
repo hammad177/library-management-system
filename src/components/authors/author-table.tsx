@@ -7,7 +7,7 @@ import AuthorsModal from "./author-modal";
 import { FilePenLine, Trash2 } from "lucide-react";
 import AppTooltip from "@/components/tooltip";
 import { Button } from "@/components/ui/button";
-import { deleteAuthor } from "@/actions/serverAction";
+import { deleteAuthor } from "@/actions/author";
 import DeleteModal from "../delete-modal";
 
 type PropsAuthorsTable = {

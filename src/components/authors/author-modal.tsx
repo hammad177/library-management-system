@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { TAuthorForm } from "@/type";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
-import { addAuthor, editAuthor } from "@/actions/serverAction";
+import { addAuthor, editAuthor } from "@/actions/author";
 import { ReactNode } from "react";
 import useFormSubmission from "@/hooks/useFormSubmission";
 
