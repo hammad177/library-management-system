@@ -8,12 +8,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { TAuthorForm } from "@/type";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
-import { addAuthor, editAuthor } from "@/actions/author";
-import { ReactNode } from "react";
+import AppTooltip from "@/components/tooltip";
+import { insertIntoDB, updateIntoDB } from "@/actions/serverActions";
 import useFormSubmission from "@/hooks/useFormSubmission";
 
 type PropsAuthorsModal = {
@@ -46,14 +47,22 @@ const AuthorsModal = ({
     isUpdate: isUpdate ?? false,
     itemId: itemId ?? "",
     initialState: initialState,
+    tableName: "authors",
     reset: reset,
-    addFn: addAuthor,
-    editFn: editAuthor,
+    addFn: insertIntoDB,
+    editFn: updateIntoDB,
   });
 
   return (
     <Dialog>
-      <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+      {isUpdate ? (
+        <AppTooltip title="Edit">
+          <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+        </AppTooltip>
+      ) : (
+        <DialogTrigger asChild>{TriggerButton}</DialogTrigger>
+      )}
+
       <DialogContent className="sm:max-w-[425px]">
         <form onSubmit={handleSubmit(handleFormSubmission)}>
           <DialogHeader>

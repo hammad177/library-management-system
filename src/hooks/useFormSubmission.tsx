@@ -1,19 +1,25 @@
 import { useToast } from "@/components/ui/use-toast";
-import { QueryResponse } from "@/type";
+import { DatabaseTables, QueryResponse } from "@/type";
 
 type PropsFormSubmission = {
   isUpdate: boolean;
   itemId: string;
   initialState: any;
+  tableName: DatabaseTables;
   reset: (initialState: any) => void;
-  editFn: (itemId: string, data: any) => Promise<QueryResponse>;
-  addFn: (data: any) => Promise<QueryResponse>;
+  editFn: (
+    tableName: DatabaseTables,
+    itemId: string,
+    data: any
+  ) => Promise<QueryResponse>;
+  addFn: (tableName: DatabaseTables, data: any) => Promise<QueryResponse>;
 };
 
 const useFormSubmission = ({
   isUpdate,
   itemId,
   initialState,
+  tableName,
   reset,
   editFn,
   addFn,
@@ -23,10 +29,10 @@ const useFormSubmission = ({
   const handleFormSubmission = async (data: any) => {
     let response: QueryResponse | null = null;
     if (isUpdate && itemId) {
-      response = await editFn(itemId, data);
+      response = await editFn(tableName, itemId, data);
     }
     if (!isUpdate) {
-      response = await addFn(data);
+      response = await addFn(tableName, data);
     }
 
     if (!response) {

@@ -4,10 +4,9 @@ import React, { useMemo } from "react";
 import FilteredTable from "@/components/ui/filtered-table";
 import { Card } from "@/components/ui/card";
 import AuthorsModal from "./author-modal";
-import { FilePenLine, Trash2 } from "lucide-react";
-import AppTooltip from "@/components/tooltip";
+import { FilePenLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { deleteAuthor } from "@/actions/author";
+import { deleteFromDB } from "@/actions/serverActions";
 import DeleteModal from "../delete-modal";
 
 type PropsAuthorsTable = {
@@ -32,11 +31,7 @@ const AuthorsTable = ({ data }: PropsAuthorsTable) => {
           return (
             <div className="flex items-center gap-5">
               <AuthorsModal
-                TriggerButton={
-                  <AppTooltip title="Edit">
-                    <FilePenLine className="cursor-pointer" />
-                  </AppTooltip>
-                }
+                TriggerButton={<FilePenLine className="cursor-pointer" />}
                 isUpdate={true}
                 formValues={{ name: values?.name || "" }}
                 itemId={values?.id ?? ""}
@@ -45,7 +40,8 @@ const AuthorsTable = ({ data }: PropsAuthorsTable) => {
               <DeleteModal
                 title="Author"
                 id={values?.id}
-                deleteFn={deleteAuthor}
+                tableName="authors"
+                deleteFn={deleteFromDB}
               />
             </div>
           );

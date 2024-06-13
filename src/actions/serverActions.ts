@@ -6,11 +6,13 @@ import {
   generateInsertQuery,
   generateUpdateQuery,
 } from "@/lib/queryGenerator";
-import { QueryResponse } from "@/type";
-import { revalidatePath } from "next/cache";
+import { DatabaseTables, QueryResponse } from "@/type";
 
-export const addAuthor = (data: Record<string, string>) => {
-  const { query, values } = generateInsertQuery("authors", {
+export const insertIntoDB = (
+  tableName: DatabaseTables,
+  data: Record<string, string>
+) => {
+  const { query, values } = generateInsertQuery(tableName, {
     ...data,
     created_at: new Date().toISOString(),
     updated_at: new Date().toISOString(),
@@ -21,14 +23,13 @@ export const addAuthor = (data: Record<string, string>) => {
       if (err) {
         resolve({
           success: false,
-          message: "Failed to add new author",
+          message: "Failed to add new record",
           data: [],
         });
       } else {
-        revalidatePath("/authors");
         resolve({
           success: true,
-          message: "New author added successfully",
+          message: "New record added successfully",
           data: [],
         });
       }
@@ -36,8 +37,12 @@ export const addAuthor = (data: Record<string, string>) => {
   });
 };
 
-export const editAuthor = (itemId: string, data: Record<string, string>) => {
-  const { query, values } = generateUpdateQuery("authors", itemId, {
+export const updateIntoDB = (
+  tableName: DatabaseTables,
+  itemId: string,
+  data: Record<string, string>
+) => {
+  const { query, values } = generateUpdateQuery(tableName, itemId, {
     ...data,
     updated_at: new Date().toISOString(),
   });
@@ -47,14 +52,35 @@ export const editAuthor = (itemId: string, data: Record<string, string>) => {
       if (err) {
         resolve({
           success: false,
-          message: "Failed to edit author",
+          message: "Failed to edit record",
           data: [],
         });
       } else {
-        revalidatePath("/authors");
         resolve({
           success: true,
-          message: "Author updated successfully",
+          message: "Record updated successfully",
+          data: [],
+        });
+      }
+    });
+  });
+};
+
+export const deleteFromDB = (tableName: DatabaseTables, itemId: string) => {
+  const { query } = generateDeleteQuery(tableName, itemId);
+
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query(query, (err) => {
+      if (err) {
+        resolve({
+          success: false,
+          message: "Failed to delete record",
+          data: [],
+        });
+      } else {
+        resolve({
+          success: true,
+          message: "Record deleted successfully",
           data: [],
         });
       }
@@ -78,28 +104,5 @@ export const getAuthorsList = () => {
         }
       }
     );
-  });
-};
-
-export const deleteAuthor = (itemId: string) => {
-  const { query } = generateDeleteQuery("authors", itemId);
-
-  return new Promise<QueryResponse>((resolve, reject) => {
-    sql_db.query(query, (err) => {
-      if (err) {
-        resolve({
-          success: false,
-          message: "Failed to delete author",
-          data: [],
-        });
-      } else {
-        revalidatePath("/authors");
-        resolve({
-          success: true,
-          message: "Author deleted successfully",
-          data: [],
-        });
-      }
-    });
   });
 };

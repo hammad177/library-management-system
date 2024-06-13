@@ -10,19 +10,23 @@ import { Button } from "@/components/ui/button";
 import AppTooltip from "@/components/tooltip";
 import { useToast } from "@/components/ui/use-toast";
 import { Trash2 } from "lucide-react";
-import { QueryResponse } from "@/type";
+import { DatabaseTables, QueryResponse } from "@/type";
 
 type PropsDeleteModal = {
   id: string;
   title: string;
-  deleteFn: (itemId: string) => Promise<QueryResponse>;
+  tableName: DatabaseTables;
+  deleteFn: (
+    tableName: DatabaseTables,
+    itemId: string
+  ) => Promise<QueryResponse>;
 };
 
-const DeleteModal = ({ id, title, deleteFn }: PropsDeleteModal) => {
+const DeleteModal = ({ id, title, tableName, deleteFn }: PropsDeleteModal) => {
   const { toast } = useToast();
 
   const deleteData = async () => {
-    const { success, message } = await deleteFn(id);
+    const { success, message } = await deleteFn(tableName, id);
 
     if (!success) {
       toast({

@@ -1,5 +1,7 @@
 import { QueryResult } from "mysql2";
 
+export type DatabaseTables = "authors" | "books" | "members";
+
 export type TAuthorForm = {
   name: string;
 };

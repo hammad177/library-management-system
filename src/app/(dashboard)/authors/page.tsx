@@ -1,6 +1,6 @@
 "use server";
 
-import { getAuthorsList } from "@/actions/author";
+import { getAuthorsList } from "@/actions/serverActions";
 import AuthorsTable from "@/components/authors/author-table";
 
 const Authors = async () => {
