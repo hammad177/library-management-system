@@ -107,7 +107,7 @@ export const getAuthors = () => {
 export const getAuthorsList = () => {
   return new Promise<QueryResponse>((resolve, reject) => {
     sql_db.query(
-      "SELECT a.name AS name, COUNT(b.id) AS total_books FROM authors a LEFT JOIN books b ON a.id = b.author_id GROUP BY a.name",
+      "SELECT a.id AS id, a.name AS name, COUNT(b.id) AS total_books FROM authors a LEFT JOIN books b ON a.id = b.author_id GROUP BY a.name, a.id",
       (err, result) => {
         if (err) {
           resolve({
