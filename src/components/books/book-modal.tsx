@@ -45,6 +45,7 @@ const BooksModal = ({
     handleSubmit,
     reset,
     setValue,
+    watch,
     formState: { errors },
   } = useForm<TBookForm>({
     defaultValues: isUpdate ? formValues : initialState,
@@ -115,6 +116,7 @@ const BooksModal = ({
               setValue={setValue}
               requiredMessage="Genre is required"
               register={register}
+              watch={watch}
               error={errors?.genre}
               errorMessage={errors?.genre?.message}
               options={genreOptions()}
@@ -127,6 +129,7 @@ const BooksModal = ({
               setValue={setValue}
               requiredMessage="Author is required"
               register={register}
+              watch={watch}
               error={errors?.author_id}
               errorMessage={errors?.author_id?.message}
               options={authorsOption}

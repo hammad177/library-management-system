@@ -20,6 +20,7 @@ type PropsSelectBox = {
   errorMessage: string | undefined;
   setValue: any;
   register: any;
+  watch: any;
   options: {
     label: string;
     value: string;
@@ -37,12 +38,14 @@ const SelectBox = ({
   requiredMessage,
   setValue,
   register,
+  watch,
 }: PropsSelectBox) => {
   return (
     <div className="grid grid-cols-4 items-center gap-4">
       <Label htmlFor="genre">{label}</Label>
 
       <Select
+        value={watch(name)}
         onValueChange={(value) => setValue(name, value)}
         {...register(name, { required: requiredMessage })}
       >
