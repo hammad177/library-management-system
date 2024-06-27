@@ -40,9 +40,12 @@ export const insertIntoDB = (
 export const updateIntoDB = (
   tableName: DatabaseTables,
   itemId: string,
-  data: Record<string, string>
+  data: Record<string, string>,
+  whereCondition?: string
 ) => {
-  const { query, values } = generateUpdateQuery(tableName, itemId, {
+  const condition =
+    whereCondition && itemId == "" ? whereCondition : `id = ${itemId}`;
+  const { query, values } = generateUpdateQuery(tableName, condition, {
     ...data,
     updated_at: new Date().toISOString(),
   });
@@ -104,6 +107,22 @@ export const getAuthors = () => {
   });
 };
 
+export const getMembers = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query("SELECT id, name FROM members", (err, result) => {
+      if (err) {
+        resolve({
+          success: false,
+          message: "Failed to fetch data",
+          data: [],
+        });
+      } else {
+        resolve({ success: true, message: "Members", data: result });
+      }
+    });
+  });
+};
+
 export const getAuthorsList = () => {
   return new Promise<QueryResponse>((resolve, reject) => {
     sql_db.query(
@@ -154,7 +173,53 @@ export const getMembersList = () => {
             data: [],
           });
         } else {
-          resolve({ success: true, message: "Authors List", data: result });
+          resolve({ success: true, message: "Members List", data: result });
+        }
+      }
+    );
+  });
+};
+
+export const getAvailableBooks = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query(
+      "SELECT id, title, edition FROM books WHERE status = 'available'",
+      (err, result) => {
+        if (err) {
+          resolve({
+            success: false,
+            message: "Failed to fetch data",
+            data: [],
+          });
+        } else {
+          resolve({
+            success: true,
+            message: "Available Books List",
+            data: result,
+          });
+        }
+      }
+    );
+  });
+};
+
+export const getBooksStatus = () => {
+  return new Promise<QueryResponse>((resolve, reject) => {
+    sql_db.query(
+      "SELECT b.id, b.title, b.edition, b.status, m.name AS member_name FROM books b LEFT JOIN book_loans bl ON b.id = bl.book_id AND bl.return_date IS NULL LEFT JOIN members m ON bl.member_id = m.id",
+      (err, result) => {
+        if (err) {
+          resolve({
+            success: false,
+            message: "Failed to fetch data",
+            data: [],
+          });
+        } else {
+          resolve({
+            success: true,
+            message: "Books Status List",
+            data: result,
+          });
         }
       }
     );

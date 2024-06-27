@@ -1,7 +1,7 @@
 import { QueryResult } from "mysql2";
 import { ReactNode } from "react";
 
-export type DatabaseTables = "authors" | "books" | "members";
+export type DatabaseTables = "authors" | "books" | "members" | "book_loans";
 
 export type TAuthorForm = {
   name: string;
@@ -17,6 +17,10 @@ export type TBookForm = {
   genre: string;
   author_id: string;
 };
+export type TBookIssueForm = {
+  book_id: string;
+  member_id: string;
+};
 export type FormModalProps = {
   TriggerButton: ReactNode;
   isUpdate?: boolean;
@@ -28,3 +32,4 @@ export type QueryResponse = {
   message: string;
   data: Record<string, string>[] | QueryResult;
 };
+export type TSelectBoxOptions = { label: string; value: string };

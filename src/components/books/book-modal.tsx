@@ -9,7 +9,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { FormModalProps, TBookForm } from "@/type";
+import { FormModalProps, TBookForm, TSelectBoxOptions } from "@/type";
 import { useForm } from "react-hook-form";
 import FormInput from "@/components/form-input";
 import AppTooltip from "@/components/tooltip";
@@ -36,9 +36,7 @@ const BooksModal = ({
   formValues,
   itemId,
 }: FormModalProps) => {
-  const [authorsOption, setAuthorsOption] = useState<
-    { label: string; value: string }[]
-  >([]);
+  const [authorsOption, setAuthorsOption] = useState<TSelectBoxOptions[]>([]);
 
   const {
     register,

@@ -1,80 +1,18 @@
 "use client";
+
 import React, { useMemo } from "react";
 import FilteredTable from "@/components/ui/filtered-table";
 import { Card } from "@/components/ui/card";
 import BooksStatusModal from "./book-status-modal";
+import { Undo2 } from "lucide-react";
+import AppTooltip from "../tooltip";
+import { updateIntoDB } from "@/actions/serverActions";
 
-interface Book {
-  title: string;
-  edition: number;
-  author_name: string;
-  genre: string;
-}
+type PropsBooksStatusTable = {
+  data: any[];
+};
 
-const bookData: Book[] = [
-  {
-    title: "Eos aut aut.",
-    edition: 5,
-    author_name: "John Doe",
-    genre: "Rock",
-  },
-  {
-    title: "Tempore qui ipsum.",
-    edition: 2,
-    author_name: "Jane Smith",
-    genre: "Jazz",
-  },
-  {
-    title: "Iure et non.",
-    edition: 3,
-    author_name: "Alice Johnson",
-    genre: "Classical",
-  },
-  {
-    title: "Nostrum sunt ad.",
-    edition: 7,
-    author_name: "Chris Lee",
-    genre: "Pop",
-  },
-  {
-    title: "Quisquam est rerum.",
-    edition: 1,
-    author_name: "Patricia Brown",
-    genre: "Hip-Hop",
-  },
-  {
-    title: "Et distinctio aut.",
-    edition: 4,
-    author_name: "Michael Davis",
-    genre: "Country",
-  },
-  {
-    title: "Quidem aut voluptas.",
-    edition: 6,
-    author_name: "Linda Wilson",
-    genre: "Electronic",
-  },
-  {
-    title: "Mollitia minus pariatur.",
-    edition: 8,
-    author_name: "Robert Martinez",
-    genre: "Reggae",
-  },
-  {
-    title: "Quasi excepturi similique.",
-    edition: 9,
-    author_name: "Mary Anderson",
-    genre: "Blues",
-  },
-  {
-    title: "Laboriosam nulla cum.",
-    edition: 10,
-    author_name: "William Thomas",
-    genre: "R&B",
-  },
-];
-
-const BooksStatusTable = () => {
+const BooksStatusTable = ({ data }: PropsBooksStatusTable) => {
   const column = useMemo(
     () => [
       {
@@ -87,14 +25,37 @@ const BooksStatusTable = () => {
       },
       {
         header: "Status",
-        accessorKey: "author_name",
+        accessorKey: "status",
       },
       {
         header: "Member Name",
-        accessorKey: "genre",
+        accessorKey: "member_name",
       },
       {
-        header: "Member ID",
+        header: "Action",
+        cell: (prop: any) => {
+          const { id, status } = prop?.row?.original;
+          const handleReturnBook = async () => {
+            await updateIntoDB("books", id, { status: "available" });
+            await updateIntoDB(
+              "book_loans",
+              "",
+              {
+                return_date: new Date().toISOString(),
+              },
+              `book_id = ${id}`
+            );
+
+            setTimeout(() => {
+              window.location.reload();
+            }, 800);
+          };
+          return status === "issued" ? (
+            <AppTooltip title="Return">
+              <Undo2 onClick={handleReturnBook} />
+            </AppTooltip>
+          ) : null;
+        },
       },
     ],
     []
@@ -104,7 +65,7 @@ const BooksStatusTable = () => {
     <Card>
       <FilteredTable
         title="Books Status"
-        data={bookData}
+        data={data}
         columns={column}
         ButtonCmp={BooksStatusModal}
         isLoading={false}

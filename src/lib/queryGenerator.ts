@@ -15,7 +15,7 @@ export const generateInsertQuery = (
 
 export const generateUpdateQuery = (
   tableName: string,
-  itemId: string,
+  condition: string,
   data: Record<string, string>
 ) => {
   const columnsAndValues = Object.entries(data);
@@ -23,7 +23,7 @@ export const generateUpdateQuery = (
     .map(([column]) => `${column} = ?`)
     .join(", ");
 
-  const query = `UPDATE ${tableName} SET ${setClause} WHERE id = ${itemId}`;
+  const query = `UPDATE ${tableName} SET ${setClause} WHERE ${condition}`;
   const values = columnsAndValues.flatMap(([, value]) => [value]);
 
   return { query, values };
