@@ -63,7 +63,7 @@ const MembersTable = ({ data }: PropsMembersTable) => {
         columns={column}
         ButtonCmp={() => (
           <MembersModal
-            TriggerButton={<Button variant="default">Add Author</Button>}
+            TriggerButton={<Button variant="default">Add Member</Button>}
           />
         )}
         isLoading={false}
